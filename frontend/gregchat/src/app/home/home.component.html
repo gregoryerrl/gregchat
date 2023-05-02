@@ -1,0 +1,69 @@
+<div class="fullpage">
+  <div class="card edit d-flex" *ngIf="editProfile">
+    <div class="card col-4 m-auto py-3">
+      <form
+        (ngSubmit)="onSubmit()"
+        class="d-flex flex-column justify-content-center m-auto p-auto"
+      >
+        <img class="col-2 mx-auto rounded-circle" [src]="profPic" alt=" " />
+        <div
+          class="d-flex flex-row mx-auto justify-content-center align-items-center"
+        >
+          <input
+            class="mx-auto px-5 border my-3"
+            type="file"
+            (change)="onFileSelected($event)"
+          />
+        </div>
+        <div class="form-outline mb-4 mx-auto">
+          <input
+            type="text"
+            name="userInput"
+            placeholder="Username"
+            [(ngModel)]="user"
+          />
+        </div>
+
+        <!-- Submit button -->
+        <div class="d-flex flex-row">
+          <button
+            type="button submit"
+            class="btn btn-primary btn-block mb-4 float-center align-self-center mx-auto"
+          >
+            Submit
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary btn-block mb-4 float-center align-self-center mx-auto"
+            (click)="cancel(false)"
+          >
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div class="card mx-auto my-5 col-10 d-flex flex-row">
+    <div class="card-body prof my-2 col-4 d-flex flex-column">
+      <div class="d-flex flex-row">
+        <img
+          class="col-4 ms-4 rounded-circle"
+          [src]="profilePic"
+          alt="Profile Picture"
+        />
+        <div class="mt-3 d-flex flex-column justify-content-center mx-auto">
+          <h1>{{ username }}</h1>
+          <div>
+            <button class="btn btn-primary my-3" (click)="editProfile = true">
+              Edit Profile</button
+            ><button class="btn" (click)="logout()">Logout</button>
+          </div>
+        </div>
+      </div>
+      <div class="mt-2 border-top">
+        <div class="d-flex flex-row justify-content-center"></div>
+      </div>
+    </div>
+    <div class="card-body col-8"></div>
+  </div>
+</div>

@@ -1,0 +1,33 @@
+.col-10 {
+  height: 83.33333%;
+}
+
+.fullpage {
+  height: 100vh;
+  width: 100vw;
+  font-family: "Roboto";
+}
+
+.prof {
+  border-right: 1px solid rgb(182, 182, 182);
+}
+
+h1 {
+  border-bottom: 1px solid rgb(182, 182, 182);
+  font-size: 120%;
+  text-align: center;
+}
+
+.edit {
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.37);
+  z-index: 999;
+  margin: 0;
+  margin-top: 0;
+}
+
+.edit > .card {
+  height: 60%;
+}

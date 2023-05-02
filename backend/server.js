@@ -3,10 +3,15 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
+const cors = require("cors");
+const defPic = require("./defaultPic.json");
 
 // Initialize app and body parser middleware
 const app = express();
-app.use(bodyParser.json());
+
+// Increase the limit of the request payload to 50MB
+app.use(bodyParser.json({limit: "50mb"}));
+app.use(bodyParser.urlencoded({limit: "50mb", extended: true}));
 
 // Connect to MongoDB
 mongoose
@@ -20,10 +25,20 @@ mongoose
   .then(() => console.log("MongoDB connected"))
   .catch((err) => console.log(err));
 
+app.use(
+  cors({
+    origin: "http://localhost:4200",
+  })
+);
+
 // Define User schema
 const userSchema = new mongoose.Schema({
   username: {type: String, unique: true},
   password: String,
+  profilePicture: {
+    type: String,
+    default: defPic.profPic,
+  },
 });
 
 // Define User model
@@ -52,20 +67,75 @@ app.post("/login", async (req, res) => {
       user.password
     );
     if (!validPassword) throw new Error("Incorrect password");
-    res.status(200).json({message: "Login successful"});
+    // Get the user by ID and send it in the response
+    const foundUser = await User.findById(user._id);
+    res.status(200).json({
+      success: true,
+      message: "Login successful",
+      user: foundUser,
+    });
   } catch (err) {
-    res.status(401).json({error: err.message});
+    res.status(401).json({success: false, error: err.message});
   }
 });
 
 // Get all users
-
 app.get("/users", async (req, res) => {
   try {
     const users = await User.find({});
     res.status(200).json({
       message: "All registered users fetched successfully",
       users: users,
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      error: "Server error",
+    });
+  }
+});
+
+// POST request for logging out user
+app.get("/logout", async (req, res) => {
+  // Perform any necessary cleanup or API calls when the user logs out
+
+  // Respond with status code 200 and a success message
+  res.status(200).json({success: true, message: "Logout successful"});
+});
+
+// PUT request for updating user information
+app.put("/users/:id", async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) throw new Error("User not found");
+    user.username = req.body.username || user.username;
+    user.password = req.body.password
+      ? await bcrypt.hash(req.body.password, 10)
+      : user.password;
+    user.profilePicture = req.body.profilePicture || user.profilePicture;
+    await user.save();
+    res.status(200).json({
+      success: true,
+      message: "User information updated successfully",
+      user: user,
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      error: "Server error",
+    });
+  }
+});
+
+// GET request for getting user information by ID
+app.get("/users/:id", async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) throw new Error("User not found");
+    res.status(200).json({
+      success: true,
+      message: "User information fetched successfully",
+      user: user,
     });
   } catch (err) {
     console.log(err);
