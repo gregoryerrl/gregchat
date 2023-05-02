@@ -1,8 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../auth.service';
 import { ToastrService } from 'ngx-toastr';
 import { HttpClient } from '@angular/common/http';
+import { Chatroom } from '../chatlist/chatlist.component';
+
 import io from 'socket.io-client';
 
 interface Chatbox {
@@ -15,8 +17,12 @@ interface Chatbox {
   styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent {
+  @Input() selectedUser: string = '';
+  selectedChatroom: Chatroom | null = null;
   chatboxes: Chatbox[] = [];
   editProfile = false;
+
+  active = false;
   public profilePic: string;
   public username: string;
   public userId: string;
@@ -50,8 +56,11 @@ export class HomeComponent {
     // Listen for user-list event from the server and update the user list
     this.socket.on('user-list', (users: any[]) => {
       console.log(users);
+      // Filter the user list to include only active users
+      const activeUsers = users.filter((user) => user.online === true);
+      console.log(activeUsers);
       // Update the user list in local storage
-      localStorage.setItem('users', JSON.stringify(users));
+      localStorage.setItem('users', JSON.stringify(activeUsers));
     });
   }
 
@@ -141,5 +150,24 @@ export class HomeComponent {
 
   addChatbox(recipient: string) {
     this.chatboxes.push({ recipient });
+  }
+
+  showActive(data: any) {
+    this.active = data;
+  }
+
+  onStartChatting(user: any) {
+    const chatbox = {
+      recipient: user.username,
+    };
+    this.chatboxes.push(chatbox);
+  }
+
+  onSelect(user: any) {
+    this.onStartChatting(user);
+  }
+
+  onChatroomSelected(chatroom: Chatroom) {
+    this.selectedChatroom = chatroom;
   }
 }

@@ -1,0 +1,15 @@
+<div class="p-2">
+  <button class="btn btn-primary float-end me-3" (click)="refreshUsers()">
+    Refresh
+  </button>
+  <div class="d-flex p-5">
+    <div class="card col-3 p-2 m-3" *ngFor="let user of users">
+      <div class="d-flex flex-column my-auto justify-content-center">
+        <span style="text-align: center">{{ user.username }}</span>
+        <button class="btn btn-primary chat" (click)="onChat(user)">
+          Start Chatting
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

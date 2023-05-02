@@ -10,7 +10,9 @@ import { HttpClientModule } from '@angular/common/http';
 import { RegisterComponent } from './register/register.component';
 import { HomeComponent } from './home/home.component';
 import { ChatboxComponent } from './chatbox/chatbox.component';
-import { SocketIoModule } from 'ngx-socket-io'; //
+import { SocketIoModule } from 'ngx-socket-io';
+import { ActiveUsersComponent } from './active-users/active-users.component';
+import { ChatListComponent } from './chatlist/chatlist.component'; //
 
 @NgModule({
   declarations: [
@@ -19,6 +21,8 @@ import { SocketIoModule } from 'ngx-socket-io'; //
     RegisterComponent,
     HomeComponent,
     ChatboxComponent,
+    ActiveUsersComponent,
+    ChatListComponent,
   ],
   imports: [
     BrowserModule,

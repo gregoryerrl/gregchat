@@ -1,0 +1,15 @@
+<div class="d-flex flex-column justify-content-center p-2">
+  <h4 class="text-center mt-2">Chat List</h4>
+  <ul class="list-group">
+    <li
+      class="list-group-item"
+      *ngFor="let chatroom of chatrooms"
+      (click)="onSelect(chatroom)"
+    >
+      <span>{{ getOtherUser(chatroom)?.username }}</span>
+      <span class="badge badge-primary badge-pill">{{
+        chatroom.messages.length
+      }}</span>
+    </li>
+  </ul>
+</div>

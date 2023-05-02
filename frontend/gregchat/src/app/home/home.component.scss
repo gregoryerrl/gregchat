@@ -28,6 +28,15 @@ h1 {
   margin-top: 0;
 }
 
-.edit > .card {
+.edit > .col-4 {
   height: 60%;
+}
+
+.edit > .col-10 {
+  height: 83.33333%;
+}
+
+.activeback {
+  position: absolute;
+  bottom: 0;
 }

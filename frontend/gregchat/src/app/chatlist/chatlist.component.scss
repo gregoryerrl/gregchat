@@ -1,0 +1,15 @@
+.list-group-item {
+  cursor: pointer;
+}
+
+.list-group-item:hover {
+  background-color: #b8bdfd;
+  border: 1px solid #b8bdfd;
+  transition: ease-in-out 0.3s;
+
+  .badge {
+    color: #b8bdfd;
+
+    transition: ease-in-out 0.3s;
+  }
+}
