@@ -5,10 +5,18 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const cors = require("cors");
 const defPic = require("./defaultPic.json");
+const http = require("http");
+const socketIo = require("socket.io");
 
 // Initialize app and body parser middleware
 const app = express();
-
+const server = http.createServer(app);
+const io = require("socket.io")(server, {
+  cors: {
+    origin: "http://localhost:4200",
+    methods: ["GET", "POST"],
+  },
+});
 // Increase the limit of the request payload to 50MB
 app.use(bodyParser.json({limit: "50mb"}));
 app.use(bodyParser.urlencoded({limit: "50mb", extended: true}));
@@ -27,7 +35,7 @@ mongoose
 
 app.use(
   cors({
-    origin: "http://localhost:4200",
+    origin: "*",
   })
 );
 
@@ -39,10 +47,41 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: defPic.profPic,
   },
+  online: {type: Boolean, default: false},
 });
 
 // Define User model
 const User = mongoose.model("User", userSchema);
+
+// Socket.IO connection event
+io.on("connection", (socket) => {
+  console.log("New client connected");
+
+  // Listen for user-connected event
+  socket.on("user-connected", async (user) => {
+    console.log(`User ${user.id} connected`);
+    // Update the user's online status to true
+    await User.findByIdAndUpdate(user.id, {online: true});
+    // Send the updated user list to all clients
+    const users = await User.find({});
+    io.emit("user-list", users);
+  });
+
+  // Listen for user-disconnected event
+  socket.on("user-disconnected", async (user) => {
+    console.log(`User ${user.id} disconnected`);
+    // Update the user's online status to false
+    await User.findByIdAndUpdate(user.id, {online: false});
+    // Send the updated user list to all clients
+    const users = await User.find({});
+    io.emit("user-list", users);
+  });
+
+  // Socket.IO event for disconnecting
+  socket.on("disconnect", () => {
+    console.log("Client disconnected");
+  });
+});
 
 // POST request for registering new user
 app.post("/register", async (req, res) => {
@@ -146,4 +185,4 @@ app.get("/users/:id", async (req, res) => {
 });
 
 // Start server
-app.listen(3000, () => console.log("Server started on port 3000"));
+server.listen(3000, () => console.log("Server started on port 3000"));

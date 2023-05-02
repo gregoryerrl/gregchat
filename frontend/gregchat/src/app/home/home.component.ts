@@ -3,6 +3,11 @@ import { Router } from '@angular/router';
 import { AuthService } from '../auth.service';
 import { ToastrService } from 'ngx-toastr';
 import { HttpClient } from '@angular/common/http';
+import io from 'socket.io-client';
+
+interface Chatbox {
+  recipient: string;
+}
 
 @Component({
   selector: 'app-home',
@@ -10,6 +15,7 @@ import { HttpClient } from '@angular/common/http';
   styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent {
+  chatboxes: Chatbox[] = [];
   editProfile = false;
   public profilePic: string;
   public username: string;
@@ -18,6 +24,8 @@ export class HomeComponent {
   user = '';
   profPic = '';
   loginError = '';
+
+  private socket: any;
 
   constructor(
     private router: Router,
@@ -29,6 +37,22 @@ export class HomeComponent {
     this.profilePic = currentUser.profilePicture;
     this.username = currentUser.username;
     this.userId = currentUser._id;
+
+    // Connect to Socket.IO server
+    this.socket = io('http://localhost:3000');
+
+    // Emit a user-connected event to the server with the user's information
+    this.socket.emit('user-connected', {
+      id: this.userId,
+      username: this.username,
+    });
+
+    // Listen for user-list event from the server and update the user list
+    this.socket.on('user-list', (users: any[]) => {
+      console.log(users);
+      // Update the user list in local storage
+      localStorage.setItem('users', JSON.stringify(users));
+    });
   }
 
   ngOnInit(): void {
@@ -52,6 +76,12 @@ export class HomeComponent {
   }
 
   logout() {
+    // Emit a user-disconnected event to the server with the user's information
+    this.socket.emit('user-disconnected', {
+      id: this.userId,
+      username: this.username,
+    });
+
     // perform the logout operation
     this.authService.logout().subscribe(
       () => {
@@ -107,5 +137,9 @@ export class HomeComponent {
 
   cancel(data: any) {
     this.editProfile = data;
+  }
+
+  addChatbox(recipient: string) {
+    this.chatboxes.push({ recipient });
   }
 }

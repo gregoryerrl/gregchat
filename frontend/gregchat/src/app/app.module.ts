@@ -9,6 +9,8 @@ import { LoginComponent } from './login/login.component';
 import { HttpClientModule } from '@angular/common/http';
 import { RegisterComponent } from './register/register.component';
 import { HomeComponent } from './home/home.component';
+import { ChatboxComponent } from './chatbox/chatbox.component';
+import { SocketIoModule } from 'ngx-socket-io'; //
 
 @NgModule({
   declarations: [
@@ -16,6 +18,7 @@ import { HomeComponent } from './home/home.component';
     LoginComponent,
     RegisterComponent,
     HomeComponent,
+    ChatboxComponent,
   ],
   imports: [
     BrowserModule,
@@ -23,6 +26,7 @@ import { HomeComponent } from './home/home.component';
     FormsModule,
     HttpClientModule,
     ToastrModule.forRoot(),
+    SocketIoModule.forRoot({ url: 'http://localhost:3000' }),
   ],
   providers: [],
   bootstrap: [AppComponent],

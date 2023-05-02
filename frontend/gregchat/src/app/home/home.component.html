@@ -64,6 +64,12 @@
         <div class="d-flex flex-row justify-content-center"></div>
       </div>
     </div>
+    <div class="m-2">
+      <app-chatbox
+        *ngFor="let chatbox of chatboxes"
+        [recipient]="chatbox.recipient"
+      ></app-chatbox>
+    </div>
     <div class="card-body col-8"></div>
   </div>
 </div>

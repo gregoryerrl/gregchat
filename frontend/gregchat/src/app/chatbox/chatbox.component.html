@@ -1,0 +1,12 @@
+<div>
+  <h2>Private Messages with {{ recipient }}</h2>
+  <ul>
+    <li *ngFor="let message of messages">
+      <strong>{{ message.from }}:</strong> {{ message.message }}
+    </li>
+  </ul>
+  <form (ngSubmit)="sendMessage(messageInput.value)">
+    <input type="text" #messageInput placeholder="Type your message..." />
+    <button type="submit">Send</button>
+  </form>
+</div>
